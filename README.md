@@ -20,7 +20,7 @@
 
     After the module installation, simply run the Pure-Glitch.py file.
 
-[<img src="https://img.shields.io/badge/DOCUMENTATION-informational?&color=orange&style=for-the-badge" width="205">](https://github.com/Akascape/Pure-Glitch/wiki) [<img src="https://img.shields.io/badge/GALLERY-informational?&color=green&style=for-the-badge" width="120">](https://github.com/Akascape/Pure-Glitch/blob/main/GALLERY.md)  [<img src="https://img.shields.io/badge/LICENSE-MIT-informational?&color=yellow&style=for-the-badge" width="185">](https://github.com/Akascape/Pure-Glitch/blob/main/LICENSE)
+[<img src="https://img.shields.io/badge/DOCUMENTATION-informational?&color=orange&style=for-the-badge" width="205">](https://github.com/Akascape/Pure-Glitch/wiki) [<img src="https://img.shields.io/badge/GALLERY-informational?&color=green&style=for-the-badge" width="120">](https://github.com/Akascape/Pure-Glitch/blob/Gallery/GALLERY.md)  [<img src="https://img.shields.io/badge/LICENSE-MIT-informational?&color=yellow&style=for-the-badge" width="185">](https://github.com/Akascape/Pure-Glitch/blob/main/LICENSE)
 
 
 ## MORE INFO
