@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=cylinder&color=timeGradient&section=header&text=PURE-GLITCH&fontSize=90&animation=fadeIn)
+[![header](https://capsule-render.vercel.app/api?type=cylinder&color=timeGradient&section=header&text=PURE-GLITCH&fontSize=90&animation=fadeIn)](https://github.com/Akascape/Pure-Glitch)
 
 ## What is Pure-Glitch?
 **Pure glitch is my new glitch art tool that can easily corrupt any image with just one click.**
