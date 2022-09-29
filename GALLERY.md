@@ -17,13 +17,14 @@
 <img src=https://user-images.githubusercontent.com/89206401/192837079-b648be41-9ca3-46b6-86ae-4f880396a3ad.png width=80% height=50%>
 <img src=https://user-images.githubusercontent.com/89206401/192836543-00196d2e-ccce-4ecf-822b-dee5ff7221fc.jpg width=80% height=50%>
 <img src=https://user-images.githubusercontent.com/89206401/192838512-29099ff3-af26-4ac9-b703-6a7da87eeb68.png width=80% height=50%>
+<img src=https://user-images.githubusercontent.com/89206401/192940567-d1542182-649a-4697-b786-cd47f02cd804.gif width=80% height=50%>
 <img src=https://user-images.githubusercontent.com/89206401/192837938-309c7844-7df8-41aa-aba0-0f7737371602.png width=80% height=50%>
 <img src=https://user-images.githubusercontent.com/89206401/192838773-43d4ca3d-0c5c-4258-a147-7a17f3aee891.jpg width=80% height=50%>
 <img src=https://user-images.githubusercontent.com/89206401/192844043-91487d3b-7dd8-43e8-8be4-357246d6dbc8.gif width=80% height=50%>
-<img src=https://user-images.githubusercontent.com/89206401/192839175-ca077127-8c7c-4416-bf7c-a4a74a1a0132.png width=80% height=50%>
+<img src=https://user-images.githubusercontent.com/89206401/192939328-3eceee36-9506-4964-b280-142b97d7d98a.png width=80% height=50%>
 
 ## THESE ARE SOME EXAMPLE CREATED BY ME WITH PURE-GLITCH APP :)
 
-**All original images are taken from [pexels](https://www.pexels.com/) under Free-to-use(CC0).**
+**All original images are taken from [pexels](https://www.pexels.com/) under Free-to-Use terms.**
 
 **Some images were a little bit buggy on uploading so I have to upload their screenshot versions instead.**
