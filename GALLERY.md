@@ -23,7 +23,7 @@
 <img src=https://user-images.githubusercontent.com/89206401/192844043-91487d3b-7dd8-43e8-8be4-357246d6dbc8.gif width=80% height=50%>
 <img src=https://user-images.githubusercontent.com/89206401/192939328-3eceee36-9506-4964-b280-142b97d7d98a.png width=80% height=50%>
 
-## THESE ARE SOME EXAMPLE CREATED BY ME WITH PURE-GLITCH APP :)
+## THESE ARE SOME EXAMPLE CREATED BY ME WITH [PURE-GLITCH](https://github.com/Akascape/Pure-Glitch) APP :)
 
 **All original images are taken from [pexels](https://www.pexels.com/) under Free-to-Use terms.**
 
