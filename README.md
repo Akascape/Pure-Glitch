@@ -14,7 +14,7 @@
 ## HOW TO INSTALL?
 - **For windows:** There is no installation required for windows version, just download the zip file and extract it anywhere and run the "Pure Glitch.exe" file.
 - **For python users:** Download the source code and make sure to install these external modules via pip:
-   * customtkinter
+   * customtkinter (use version 4.6.3)
    * awesometkinter
    * pillow
 
