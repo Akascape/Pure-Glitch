@@ -7,7 +7,7 @@
 
 ## DOWNLOAD
 
-### [<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/Akascape/Pure-Glitch?display_name=release&label=Windows&logo=Windows&logoColor=019df4&style=for-the-badge" width="350">](https://github.com/Akascape/Pure-Glitch/releases/download/Executables/Pure-Glitch_win64.zip)
+### [<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/Akascape/Pure-Glitch?display_name=release&label=Windows&logo=Windows&logoColor=019df4&style=for-the-badge" width="350">](https://github.com/Akascape/Pure-Glitch/releases/download/version0.2/Pure-Glitch_win64.zip)
 ### [<img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Akascape/Pure-Glitch?color=9508e2&label=Source%20Code&logo=Python&logoColor=yellow&style=for-the-badge"  width="300">](https://github.com/Akascape/Pure-Glitch/archive/refs/heads/main.zip)
 ### Don't forget to give a ⭐!
 
