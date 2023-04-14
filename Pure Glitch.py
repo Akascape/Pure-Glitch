@@ -1,10 +1,11 @@
 #=================PURE GLITCH=====================#
 #LICENSE: MIT
 #AUTHOR: Akash Bora
+#Version: 0.2
 
 import tkinter
 import customtkinter
-import awesometkinter
+import tkdial
 from PIL import Image, ImageTk, ImageFile
 import random
 import os
@@ -17,12 +18,6 @@ import time
 import sys
 import threading
 import webbrowser
-
-try:
-    import ctypes
-    ctypes.windll.shcore.SetProcessDpiAwareness(0)
-except:
-    pass
 
 class App(customtkinter.CTk):
     
@@ -38,7 +33,7 @@ class App(customtkinter.CTk):
         return os.path.join(base_path, relative_path)
     
     customtkinter.set_appearance_mode("Dark") 
-    customtkinter.set_default_color_theme(resource("Assets/Pure_Glitch_theme.json"))
+    customtkinter.set_default_color_theme("green")
     
     def __init__(self):
         
@@ -53,8 +48,18 @@ class App(customtkinter.CTk):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.bind("<1>", lambda event: event.widget.focus_set())
         self.icopath = ImageTk.PhotoImage(file=resource("Assets/icon2.png"))
+        self.wm_iconbitmap()
         self.iconphoto(False, self.icopath)
         
+        if sys.platform.startswith("win"):
+            try:
+                import ctypes
+                ctypes.windll.shcore.SetProcessDpiAwareness(0)
+                HWND = ctypes.windll.user32.GetParent(self.winfo_id())
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(HWND, 35, ctypes.byref(ctypes.c_int(0x00292929)), ctypes.sizeof(ctypes.c_int))
+            except:
+                pass
+            
         def forget_everything():
             self.entry.place_forget()
             self.button_browse.place_forget()
@@ -78,6 +83,7 @@ class App(customtkinter.CTk):
             self.dynamiclabel_4.place_forget()
             self.button_glitch.place_forget()
             self.entry2.place_forget()
+            self.replace.place_forget()
             self.button_browse2.place_forget()
             self.button_next.place_forget()
             image_label.grid_forget()
@@ -100,13 +106,13 @@ class App(customtkinter.CTk):
                 self.entry.configure(text_color="orange")
                 return
             else:
-                self.button_next.configure(fg_color=customtkinter.ThemeManager.theme["color"]["button"])
+                self.button_next.configure(fg_color=customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
                 self.entry.configure(text_color="gray50")
                 
             forget_everything()
             self.recipe.grid(row=0, column=0, columnspan=2, padx=15, pady=10, sticky="wn")
             self.recipe_bar.grid(row=0, column=0, columnspan=2, padx=15, pady=40, sticky="wn")
-            self.bar.place(x=455,y=90)
+            self.bar.place(x=440,y=75)
             self.optionmenu_1.place(x=20,y=65)
             self.optionmenu_2.place(x=250,y=65)
             self.slider_1.grid(row=0, column=0, columnspan=2, padx=15, pady=120, sticky="wn")
@@ -123,6 +129,7 @@ class App(customtkinter.CTk):
             self.dynamiclabel_4.place(x=20,y=223)
             self.button_glitch.place(x=440,y=230)
             self.entry2.place(x=20,y=280)
+            self.replace.place(x=520, y=325)
             self.button_browse2.place(x=565,y=280)
             self.button_random.place(x=560,y=60)
             if self.string_log.get()!="":
@@ -138,91 +145,87 @@ class App(customtkinter.CTk):
             self.dynamiclabel_4.configure(text= str(int(value)))
             
         def open_function():
-            global ofile
+            global ofile, ffile
             ofile = tkinter.filedialog.askopenfilename(filetypes =[('Image File', ['*.png','*.jpg','*.bmp','*.webp','*jpeg','*gif']),('All Files', '*.*')])
             if ofile:
-                self.button_next.configure(fg_color=customtkinter.ThemeManager.theme["color"]["button"])
-                self.entry.configure(textvariable=var1.set(str(ofile)), text_color="gray50")
-                self.entry2.configure(textvariable=var2.set(os.path.dirname(ofile)+"/"))
+                self.button_next.configure(fg_color=customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
+                self.entry.configure(text_color="gray50")
+                var1.set(ofile)
+                self.extension = ofile[-3:]
+                s=1
+                ffile = ofile[:-4]+"_glitched."+self.extension
+                while os.path.exists(ffile):
+                    ffile = ofile[:-4]+"_glitched_"+str(s)+"."+self.extension
+                    s+=1
+                var2.set(ffile)
                 
         def output_folder():
             global ffile
-            ffile = tkinter.filedialog.askdirectory()
+            ffile = tkinter.filedialog.asksaveasfilename(filetypes =[('Image', ['*.png','*.jpg','*.bmp','*.webp','*jpeg','*gif'])],
+                                                         initialfile=os.path.basename(ofile)[:-4]+"_glitched."+self.extension,
+                                                         defaultextension=self.extension)
+            if ffile==ofile:
+                return
             if ffile:
-                self.entry2.configure(textvariable=var2.set(ffile+"/"))
-                
+                var2.set(ffile)
+            
         def viewer():
             global image1, sfile
-            if not os.path.exists(self.entry.get()):
+            if not sfile:
                 return
-            forget_everything()
-            ImageFile.LOAD_TRUNCATED_IMAGES = True
-            filename, extension = os.path.splitext(sfile)
-            filename = filename.split("\\")[-1] if platform.system == "Windows" else filename.split("/")[-1]
-            outPath = f"{var2.get()}{filename}_mode={self.optionmenu_2.get()}_seed={int(self.slider_1.get())}_amount={int(self.slider_2.get())}_byte={int(self.slider_3.get())}_repeat={int(self.slider_4.get())}{extension}"
             try:
+                forget_everything()
+                ImageFile.LOAD_TRUNCATED_IMAGES = True
+                
                 if os.path.exists(outPath):
-                    image_label.set_image(image=None)
-                    image1 = ImageTk.PhotoImage(Image.open(outPath).resize((self.frame_right.winfo_width(), self.frame_right.winfo_height()), Image.Resampling.LANCZOS))
+                    image_label.configure(image=None)
+                    image1 = customtkinter.CTkImage(Image.open(outPath), size=((self.frame_right.winfo_width(), self.frame_right.winfo_height())))
                     image_label.configure(image=image1)
                     image_label.grid()
-                    if extension==".png":
+                    if self.extension=="png":
                         self.label_oops.configure(text="Currently this image viewer is in beta stage and \ncannot display broken PNG images!")
-                        self.label_oops.place(x=12,y=150)
+                        self.label_oops.place(x=200,y=150)
+
             except:
                 self.label_oops.configure(text="Unable to display this file!")
-                self.label_oops.place(x=200,y=150)
+                self.label_oops.place(x=220,y=150)
                 
-        def glitch_it():
-            if not os.path.exists(var2.get()):
-                self.entry2.configure(text_color="orange")
-                return
-            else:
-                self.entry2.configure(text_color="gray50")
-                
+        def glitch_it():        
             self.button_glitch.configure(state=tkinter.DISABLED)
             self.bar.set(0)
-            self.bar.start(10)
-            
+        
             try:
                 threading.Thread(target=process).start()
             except:
                 self.button_glitch.configure(state=tkinter.NORMAL)
                 self.bar.set(0)
-                self.bar.percent_label.config(text="OOPS!")
+                self.bar.configure(text="OOPS!")
                 self.string_log.set("Something went wrong!")
                 self.label_log.place(x=20,y=320)
-                self.bar.stop()
                 
         def process():
             self.label_log.place_forget()     
             global ofile, var2, sfile
-            
+
+            self.after(100, self.bar.set(10))
             if not self.optionmenu_1.get()=="Copy":
-                self.bar.stop()
-                self.bar.start(200)
                 try:
                     ifile = ofile[:-4]+"_intermediate."+self.optionmenu_1.get().lower()
                     Image.open(ofile).convert('RGB').save(ifile)
                 except:
                     self.button_glitch.configure(state=tkinter.NORMAL)
                     self.bar.set(0)
-                    self.bar.percent_label.config(text="OOPS!")
-                    self.bar.stop()
+                    self.bar.configure(text="OOPS!")
                     self.string_log.set("Conversion error!")
                     self.label_log.place(x=20,y=320)
                     return
                 sfile = ifile
-                self.bar.stop()
-                self.bar.start(10)
             else:
                 sfile=ofile
-               
+            
             def writeFile(fileByteList, fileNum, iteration, bytesTochange, seed):
                 global var2, outPath
-                filename, extension = os.path.splitext(sfile)
-                filename = filename.split("\\")[-1] if platform.system == "Windows" else filename.split("/")[-1]
-                outPath = f"{var2.get()}{filename}_mode={self.optionmenu_2.get()}_seed={int(self.slider_1.get())}_amount={int(self.slider_2.get())}_byte={int(self.slider_3.get())}_repeat={int(self.slider_4.get())}{extension}"
+                outPath = var2.get()
                 try:
                     if os.path.isfile(outPath):
                         os.remove(outPath)
@@ -230,12 +233,11 @@ class App(customtkinter.CTk):
                 except:
                     self.button_glitch.configure(state=tkinter.NORMAL)
                     self.bar.set(0)
-                    self.bar.percent_label.config(text="OOPS!")
-                    self.bar.stop()
+                    self.bar.configure(text="OOPS!")
                     self.string_log.set("Save error!")
                     self.label_log.place(x=20,y=320)
                     return
-                
+                    
             def messWithFile(originalByteList, iterations, bytesToChange, repeatWidth, fileNum):
                 newByteList = copy.copy(originalByteList)
                 iteration = 1
@@ -303,6 +305,7 @@ class App(customtkinter.CTk):
                 return byteList
 
             def main():
+                self.after(100, self.bar.set(40))
                 minChanges = 1
                 maxChanges = 1
                 if (int(self.slider_2.get()) and re.match(r"[0-9]+-[0-9]+", str(int(self.slider_2.get())))):
@@ -333,10 +336,14 @@ class App(customtkinter.CTk):
                     
                 originalByteList = list(open(sfile, "rb").read())
                 iterations = random.randint(minChanges, maxChanges)
+                self.after(100, self.bar.set(50))
                 bytesToChange = random.randint(minBytes, maxBytes)
+                self.after(100, self.bar.set(60))
                 repeatWidth = random.randint(minRepeating, maxRepeating)
+                self.after(100, self.bar.set(70))
                 messWithFile(originalByteList, iterations, bytesToChange, repeatWidth, 1)
-
+                self.after(100, self.bar.set(80))
+                
             transforms = {
                 "change": changeBytes,
                 "reverse": reverseBytes,
@@ -354,29 +361,49 @@ class App(customtkinter.CTk):
                     os.remove(ifile)
             except:
                 pass
+            
             if os.path.exists(outPath):   
                 time.sleep(1)
                 self.button_glitch.configure(state=tkinter.NORMAL)
-                self.bar.set(100)
-                self.bar.stop()
-                self.bar.percent_label.config(text="Done!")
-                if len(outPath)>=75:
-                    showname = outPath[:60]+"..."+outPath[-12:]
-                else:
-                    showname = outPath 
-                self.string_log.set("Image saved: "+str(showname))
+                self.after(100, self.bar.set(90))
+                self.after(100, self.bar.set(100))
+                self.bar.configure(text="Done!")
+                self.string_log.set("Image Saved!")
                 self.label_log.place(x=20,y=320)
-            
+                if not self.replace_file:
+                    s=1
+                    while os.path.exists(var2.get()):
+                        ffile = ofile[:-4]+"_glitched_"+str(s)+"."+self.extension
+                        s+=1
+                        var2.set(ffile)
+                        
         def randomizer():
-            self.slider_1.set(random.randint(1,10))
-            self.slider_2.set(random.randint(1,10))
-            self.slider_3.set(random.randint(1,10))
-            self.slider_4.set(random.randint(1,10))
-            self.optionmenu_2.set(random.choice(self.optionmenu_2.values))
+            x, y, w, z = random.sample(range(1,10),4)
+            self.slider_1.set(x)
+            self.dynamiclabel_1.configure(text=x)
+            self.slider_2.set(y)
+            self.dynamiclabel_2.configure(text=y)
+            self.slider_3.set(w)
+            self.dynamiclabel_3.configure(text=w)
+            self.slider_4.set(z)
+            self.dynamiclabel_4.configure(text=z)
+            self.optionmenu_2.set(random.choice(self.optionmenu_2._values))
             
         def web_help():
             webbrowser.open_new_tab("https://github.com/Akascape/Pure-Glitch")
-            
+
+        def change_ext(e):
+            if e=="Copy":
+                e = ofile[-3:]
+            self.extension = e.lower()
+            var2.set(ffile[:-3]+self.extension)
+
+        def change_file_mode():
+            if self.replace.get()==1:
+                self.replace_file = True
+            else:
+                self.replace_file = False
+
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
@@ -386,14 +413,14 @@ class App(customtkinter.CTk):
         self.frame_right = customtkinter.CTkFrame(master=self, corner_radius=10)
         self.frame_right.grid(row=0, column=1, sticky="nswe", padx=20, pady=20)
 
-        self.button_1 = customtkinter.CTkButton(master=self.frame_left, image=ImageTk.PhotoImage(Image.open(resource("Assets/new.png")).resize((32, 32), Image.Resampling.LANCZOS))
-                                                ,text="", width=50, height=50, corner_radius=0, fg_color=None, hover_color="gray10", command=place_front)
+        self.button_1 = customtkinter.CTkButton(master=self.frame_left, image=customtkinter.CTkImage(Image.open(resource("Assets/new.png")),size=(32, 32)),
+                                                text="", width=50, height=50, corner_radius=0, fg_color="transparent", hover_color="gray10", command=place_front)
         self.button_1.grid()
-        self.button_2 = customtkinter.CTkButton(master=self.frame_left, image=ImageTk.PhotoImage(Image.open(resource("Assets/gear.png")).resize((40, 40), Image.Resampling.LANCZOS))
-                                                ,text="", width=50, height=50, corner_radius=0, fg_color=None, hover_color="gray10", command=place_process)
+        self.button_2 = customtkinter.CTkButton(master=self.frame_left, image=customtkinter.CTkImage(Image.open(resource("Assets/gear.png")),size=(40, 40)), 
+                                                text="", width=50, height=50, corner_radius=0, fg_color="transparent", hover_color="gray10", command=place_process)
         self.button_2.grid()
-        self.button_3 = customtkinter.CTkButton(master=self.frame_left, image=ImageTk.PhotoImage(Image.open(resource("Assets/view.png")).resize((35, 40), Image.Resampling.LANCZOS))
-                                                ,text="", width=50, height=50, corner_radius=0, fg_color=None, hover_color="gray10", command=viewer)
+        self.button_3 = customtkinter.CTkButton(master=self.frame_left, image=customtkinter.CTkImage(Image.open(resource("Assets/view.png")),size=(35, 40)), 
+                                                text="", width=50, height=50, corner_radius=0, fg_color="transparent", hover_color="gray10", command=viewer)
         self.button_3.grid()
         
         var1=tkinter.StringVar()
@@ -401,75 +428,87 @@ class App(customtkinter.CTk):
         
         self.entry = customtkinter.CTkEntry(master=self.frame_right,text_color="gray50", width=540, height=30, textvariable=var1)
         
-        self.button_browse = customtkinter.CTkButton(master=self.frame_right, text="...", width=20, height=30, corner_radius=10, fg_color=customtkinter.ThemeManager.theme["color"]["entry_border"][1],
+        self.button_browse = customtkinter.CTkButton(master=self.frame_right, text="...", width=20, height=30, corner_radius=10, fg_color="grey30",
                                                 hover_color="gray10", command=open_function)
         
-        self.logo = customtkinter.CTkButton(master=self.frame_right, image=ImageTk.PhotoImage(Image.open(resource("Assets/LOGO.png")).resize((350, 256), Image.Resampling.LANCZOS)),
-                                                width=256, height=256, text="", bg="grey", fg_color=None, hover_color=None)
+        self.logo = customtkinter.CTkLabel(master=self.frame_right, image=customtkinter.CTkImage(Image.open(resource("Assets/LOGO.png")),size=(350, 256)),
+                                                width=256, height=256, text="")
         
         self.recipe = customtkinter.CTkLabel(master=self.frame_right,text="GLITCH RECIPE", width=5, fg_color=None)
         
         self.recipe_bar = customtkinter.CTkProgressBar(master=self.frame_right, width=580, height=5, corner_radius=10, fg_color="white")
         self.recipe_bar.set(100)
                 
-        self.bar = awesometkinter.RadialProgressbar(self.frame_right, fg=customtkinter.ThemeManager.theme["color"]["button"][1], parent_bg=customtkinter.ThemeManager.theme["color"]["frame_low"][1], size=120)
+        self.bar = tkdial.ScrollKnob(self.frame_right ,width=150, height=150, fg=self._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"]),
+                                    bg=self._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"]),
+                                    text=" ", steps=10, radius=200, bar_color="#242424", 
+                                    progress_color=self._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkButton"]["fg_color"]),
+                                    outer_color=self._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkButton"]["fg_color"]), outer_length=10, 
+                                    border_width=30, start_angle=270, inner_width=0, outer_width=5, 
+                                    text_color="white")
 
-        self.optionmenu_1 = customtkinter.CTkComboBox(master=self.frame_right, fg_color="#4d4d4d",width=160, height=25,
-                                                values=["Copy","JPG","PNG","WEBP","GIF","PCX","BMP","TIFF"])
-        
-        self.optionmenu_2 = customtkinter.CTkOptionMenu(master=self.frame_right, fg_color="#4d4d4d",width=160,button_color=customtkinter.ThemeManager.theme["color"]["combobox_border"][1],
-                                                button_hover_color=customtkinter.ThemeManager.theme["color"]["combobox_button_hover"][1], height=25,
+        self.optionmenu_1 = customtkinter.CTkComboBox(master=self.frame_right, fg_color="#4d4d4d",width=160, height=25, state="readonly",
+                                                values=["Copy","JPG","PNG","WEBP","GIF","PCX","BMP","TIFF"], command=change_ext)
+        self.optionmenu_1.set("Copy")
+        self.optionmenu_2 = customtkinter.CTkComboBox(master=self.frame_right, fg_color="#4d4d4d",width=160, height=25, state="readonly",
                                                 values=["change","reverse","repeat","remove","zero","insert","replace","move"])
+        self.optionmenu_2.set("change")
         
-        self.dynamiclabel_1 = customtkinter.CTkLabel(master=self.frame_right,text="10", width=5, height=1, fg_color=None)
-        self.dynamiclabel_2 = customtkinter.CTkLabel(master=self.frame_right,text="10", width=5, height=1, fg_color=None)
-        self.dynamiclabel_3 = customtkinter.CTkLabel(master=self.frame_right,text="10", width=5, height=1, fg_color=None)
-        self.dynamiclabel_4 = customtkinter.CTkLabel(master=self.frame_right,text="10", width=5, height=1, fg_color=None)
+        self.dynamiclabel_1 = customtkinter.CTkLabel(master=self.frame_right,text="10", width=5, height=1)
+        self.dynamiclabel_2 = customtkinter.CTkLabel(master=self.frame_right,text="10", width=5, height=1)
+        self.dynamiclabel_3 = customtkinter.CTkLabel(master=self.frame_right,text="10", width=5, height=1)
+        self.dynamiclabel_4 = customtkinter.CTkLabel(master=self.frame_right,text="10", width=5, height=1)
 
         self.slider_1 = customtkinter.CTkSlider(master=self.frame_right, width=400, from_=1, to=10, number_of_steps=9, command=dynamic1)
         self.slider_1.set(random.randint(1,10))
-        self.label1 = customtkinter.CTkLabel(master=self.frame_right,text="seed", width=5, height=1, fg_color=None)
+        self.label1 = customtkinter.CTkLabel(master=self.frame_right,text="seed", width=5, height=1)
         
         self.slider_2 = customtkinter.CTkSlider(master=self.frame_right, width=400, from_=1, to=10, number_of_steps=9, command=dynamic2)
         self.slider_2.set(random.randint(1,10))
-        self.label2 = customtkinter.CTkLabel(master=self.frame_right,text="amount", width=5, height=1, fg_color=None)
+        self.label2 = customtkinter.CTkLabel(master=self.frame_right,text="amount", width=5, height=1)
         
         self.slider_3 = customtkinter.CTkSlider(master=self.frame_right, width=400, from_=1,to=10, number_of_steps=9, command=dynamic3)
         self.slider_3.set(random.randint(1,10))
-        self.label3 = customtkinter.CTkLabel(master=self.frame_right,text="bytes", width=5, height=1, fg_color=None)
+        self.label3 = customtkinter.CTkLabel(master=self.frame_right,text="bytes", width=5, height=1)
         
         self.slider_4 = customtkinter.CTkSlider(master=self.frame_right, width=400, from_=1, to=10, number_of_steps=9, command=dynamic4)
         self.slider_4.set(random.randint(1,10))
-        self.label4 = customtkinter.CTkLabel(master=self.frame_right,text="repeat width", width=5, height=1, fg_color=None)
+        self.label4 = customtkinter.CTkLabel(master=self.frame_right,text="repeat width", width=5, height=1)
         
         global var2
-        var2=tkinter.StringVar()
-        var2.set(" ")
+        var2 = tkinter.StringVar()
+        var2.set("")
         
-        self.entry2 = customtkinter.CTkEntry(master=self.frame_right, width=540, height=30,text_color="gray50", placeholder_text="Output Folder", textvariable=var2)
+        self.entry2 = customtkinter.CTkEntry(master=self.frame_right, width=540, height=30,text_color="gray50", placeholder_text="Output Folder",
+                                             state="readonly", textvariable=var2)
 
-        self.button_browse2 = customtkinter.CTkButton(master=self.frame_right, text="...", width=20, height=30, corner_radius=10, fg_color=customtkinter.ThemeManager.theme["color"]["entry_border"][1],
+        self.button_browse2 = customtkinter.CTkButton(master=self.frame_right, text="...", width=20, height=30, corner_radius=10, fg_color="grey30",
                                                 hover_color="gray10", command=output_folder)
 
-        self.button_glitch = customtkinter.CTkButton(master=self.frame_right, text="GLITCH IT!", width=150, height=30, corner_radius=10, fg_color="gray10",hover_color="gray20", command=glitch_it)
+        self.button_glitch = customtkinter.CTkButton(master=self.frame_right, text="GLITCH IT!", width=150, height=30, corner_radius=10, fg_color="gray10",
+                                                     hover_color="gray20", command=glitch_it)
 
         self.button_next = customtkinter.CTkButton(master=self.frame_right, text="NEXT!", fg_color="gray30", width=150, height=35, corner_radius=10, command=place_process)
 
-        image_label = customtkinter.CTkButton(master=self.frame_right, image=None, text="", hover_color=None, fg_color=None, corner_radius=30)
+        image_label = customtkinter.CTkLabel(master=self.frame_right, image=None, text="", corner_radius=30)
         
-        self.label_oops = customtkinter.CTkLabel(master=self.frame_right, text="", fg_color="Black", bg_color=None)
+        self.label_oops = customtkinter.CTkLabel(master=self.frame_right, text="", fg_color="Black")
         
-        self.button_random = customtkinter.CTkButton(master=self.frame_right, image=ImageTk.PhotoImage(Image.open(resource("Assets/random.png")).resize((25, 25), Image.Resampling.LANCZOS)),
-                                                text="", width=5, height=5, corner_radius=0, fg_color=None, hover_color=None, command=randomizer)  
+        self.button_random = customtkinter.CTkButton(master=self.frame_right, image=customtkinter.CTkImage(Image.open(resource("Assets/random.png")),size=(25, 25)),
+                                                text="", width=5, height=5, corner_radius=0, fg_color="transparent", hover=False, command=randomizer)  
 
         self.string_log = tkinter.StringVar()
         self.string_log.set("")
+
+        self.replace = customtkinter.CTkCheckBox(master=self.frame_right, text="Replace", command=change_file_mode)
+        self.replace.toggle()
         
-        self.label_log = customtkinter.CTkLabel(master=self.frame_right, textvariable=self.string_log, fg_color=None, anchor="w", width=1, text_color="grey70")
+        self.label_log = customtkinter.CTkLabel(master=self.frame_right, textvariable=self.string_log, anchor="w", width=1, text_color="grey70")
 
-        self.label_version = customtkinter.CTkLabel(master=self.frame_right, fg_color=None, text="v0.1", text_color="grey70", width=1)
+        self.label_version = customtkinter.CTkLabel(master=self.frame_right, text="v0.2", text_color="grey70", width=1)
 
-        self.help_button =  customtkinter.CTkButton(master=self.frame_left, text="?", fg_color=None,width=10, hover_color=None, height=35, text_color="grey50", corner_radius=10, command=web_help)
+        self.help_button = customtkinter.CTkButton(master=self.frame_left, text="?", fg_color="transparent", width=10, hover=False,
+                                                   height=35, text_color="grey50", corner_radius=10, command=web_help)
         self.help_button.place(x=10, y=355)
         
         place_front()
